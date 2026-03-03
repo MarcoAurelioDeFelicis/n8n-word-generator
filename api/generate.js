@@ -7,6 +7,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("Body ricevuto:", Object.keys(req.body)); 
+    
+    const { templateBase64, data } = req.body;
     const { templateBase64, data } = req.body;
 
     if (!templateBase64 || !data) {
