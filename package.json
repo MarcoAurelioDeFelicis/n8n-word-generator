@@ -1,6 +1,7 @@
 {
   "name": "n8n-docx-generator",
   "version": "1.0.0",
+  "type": "module",
   "main": "api/generate.js",
   "dependencies": {
     "pizzip": "^3.1.7",
