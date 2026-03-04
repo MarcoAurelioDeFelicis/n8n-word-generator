@@ -2,7 +2,6 @@ import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 
 export default async function handler(req, res) {
-  // Only POST
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
@@ -11,28 +10,23 @@ export default async function handler(req, res) {
     const { templateBase64, data } = req.body;
 
     if (!templateBase64 || !data) {
-      return res.status(400).json({ 
-        error: 'Dati mancanti', 
-        received: Object.keys(req.body) 
-      });
+      return res.status(400).json({ error: 'Dati mancanti' });
     }
 
-    // Base64 to Buffer
-    const templateBuffer = Buffer.from(templateBase64, 'base64');
 
-    // PizZip and Docxtemplater
+    const payload = typeof data === 'string' ? JSON.parse(data) : data;
+
+    const templateBuffer = Buffer.from(templateBase64, 'base64');
     const zip = new PizZip(templateBuffer);
+    
     const doc = new Docxtemplater(zip, {
       paragraphLoop: true,
       linebreaks: true,
     });
 
-    // Insert data in the template and render the document
-    doc.setData(data);
 
-    doc.render();
+    doc.render(payload);
 
-    // Generator 
     const outputBuffer = doc.getZip().generate({
       type: 'nodebuffer',
       compression: 'DEFLATE',
@@ -44,10 +38,8 @@ export default async function handler(req, res) {
     return res.send(outputBuffer);
 
   } catch (error) {
-    console.error("Errore Generazione:", error);
-    return res.status(500).json({ 
-      error: 'Errore interno durante la generazione', 
-      details: error.message 
-    });
+    console.error("Errore:", error);
+
+    return res.status(500).json({ error: 'Errore durante la renderizzazione', details: error.message });
   }
 }
