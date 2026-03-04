@@ -1,5 +1,5 @@
-const PizZip = require('pizzip');
-const Docxtemplater = require('docxtemplater');
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
