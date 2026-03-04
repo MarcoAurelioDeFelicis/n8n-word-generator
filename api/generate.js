@@ -3,17 +3,17 @@ import Docxtemplater from 'docxtemplater';
 import expressions from 'angular-expressions';
 import _ from 'lodash';
 
-// 1. Registrazione dei filtri
+// Filters
 expressions.filters.lowerCase = (s) => (s ? String(s).toLowerCase() : "");
 expressions.filters.ucWords = (s) => (s ? _.startCase(String(s).toLowerCase()) : "");
 expressions.filters.arrayJoin = (arr, sep) => (Array.isArray(arr) ? arr.join(sep) : arr);
 expressions.filters.convCRLF = (s) => s; // Gestore base per linebreaks
 
-// 2. Parser delle espressioni
+// Expressions Parser
 function expressionsParser(tag) {
     if (!tag) return { get: (s) => s };
     try {
-        // Rimuove virgolette "smart" di Word
+        //Removal of "smart" from Word files
         const expr = expressions.compile(tag.replace(/(’|“|”|‘)/g, "'"));
         return {
             get: function(scope, context) {
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
         const { templateBase64, data } = req.body;
         if (!templateBase64 || !data) throw new Error("Dati mancanti (templateBase64 o data)");
 
-        // Parsing dei dati in ingresso
+        // Parsing imput Data
         const payload = typeof data === 'string' ? JSON.parse(data) : data;
         const templateBuffer = Buffer.from(templateBase64, 'base64');
         const zip = new PizZip(templateBuffer);
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
             parser: expressionsParser
         });
 
-        // Rendering: passiamo l'oggetto avvolto in 'd' per matchare il template {d.qualcosa}
+        // Rendering: 'd' wrapper to match the template {d.somethin}
         doc.render({ d: payload });
 
         const outputBuffer = doc.getZip().generate({
@@ -63,8 +63,7 @@ export default async function handler(req, res) {
         return res.send(outputBuffer);
 
     } catch (error) {
-        console.error("Errore generazione:", error);
-        // Risposta JSON in caso di errore (Corretto il refrefuso precedente)
+        console.error("ERROR during doc's Generation:", error);
         return res.status(500).json({ 
             error: error.message,
             stack: error.stack
