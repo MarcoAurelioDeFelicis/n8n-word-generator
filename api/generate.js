@@ -3,10 +3,14 @@ import Docxtemplater from 'docxtemplater';
 import expressions from 'angular-expressions';
 import _ from 'lodash';
 
-// Registrazione dei filtri
-expressions.filters.lowerCase = (s) => (s ? s.toLowerCase() : "");
-expressions.filters.ucWords = (s) => (s ? _.startCase(_.toLowerCase(s)) : "");
+// Registrazione dei filtri corretta
+expressions.filters.lowerCase = (s) => (s ? String(s).toLowerCase() : "");
+expressions.filters.ucWords = (s) => (s ? _.startCase(_.toLowerCase(s)) : ""); 
+// Se lodash dà ancora problemi con .toLowerCase, usa:
+// expressions.filters.ucWords = (s) => (s ? _.startCase(String(s).toLowerCase()) : "");
+
 expressions.filters.arrayJoin = (arr, sep) => (Array.isArray(arr) ? arr.join(sep) : arr);
+expressions.filters.convCRLF = (s) => s;
 
 // Parser per gestire la sintassi standard Angular |
 function expressionsParser(tag) {
