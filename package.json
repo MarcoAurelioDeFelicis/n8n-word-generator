@@ -5,6 +5,8 @@
   "main": "api/generate.js",
   "dependencies": {
     "pizzip": "^3.1.7",
-    "docxtemplater": "^3.42.0"
+    "docxtemplater": "^3.42.0",
+    "angular-expressions": "^1.2.1",
+    "lodash": "^4.17.21"
   }
 }
